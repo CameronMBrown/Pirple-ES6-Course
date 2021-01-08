@@ -1,4 +1,5 @@
 //Pirple Assignment 5 - switch statements
+//some more experimentation with internal arrow funtions
 
 function timeAdder(val1, label1, val2, label2){
 //This funtion will add 2 time values, and print the result to the console.
@@ -8,7 +9,7 @@ function timeAdder(val1, label1, val2, label2){
 
     const removePlural = (label) => {         
         if(label.slice(-1) === "s"){
-        return label.slice(0, -1);
+            return label.slice(0, -1);
         } else {
             return label;
         }
@@ -27,14 +28,14 @@ function timeAdder(val1, label1, val2, label2){
         return [val, noSLabel];
     }
 
-    const tryReduce = (timeArr) => {
+    const tryReduce = ([val, label]) => {
     //this function converts time lables to the most appropriate label.
     //ex. should convert 60 seconds = 1 minute, does not handle remainders or half values
     //ie. this will not ever output 90s = 1.5 minutes.
-        let val = timeArr[0];
-        let label = timeArr[1];
 
         switch (label) { 
+        //do not return immidiately after finding a reduce
+        //ex. 3600s can be reduced twice to 2h, then return
             case "second":
                 if (val % 60 == 0){
                     label = "minute";
@@ -51,33 +52,37 @@ function timeAdder(val1, label1, val2, label2){
                     val = val / 24;
                 }
             case "day":
-                return [val, label];
+                return [val, label]; //days is the largest time label. do not reduce further
             default:
                 console.log(label + ": unexpected time label");  
         }
         return [val, label];
     }
 
-    const addTime = (t1, t2) => {
+    const addTime = ([v1, l1], [v2, l2]) => {
     //expecting 2 arrays of length 2, add the time values considering their labels
     let finalTime = [];
 
         const printTime = (finalTime) => {
         //expecting an array of length 2 or 4. 
         //prints the resulting time to the console in a nice way.
-            const prettyString = (time) => {
+
+            const prettyString = ([val, label]) => {
+                //refactor function converts and array of len 2 to a string ready to be placed in a sentance
                 let prettyStr;
-                if (time[0] > 1 || time[0] === 0){ //we do say "0 second(s)" s needed for zero case
-                    prettyStr = time[0] + " " + addPlural(time[1]); 
-                } else  {
-                    prettyStr = time[0] + " " + time[1];
+                if (val > 1 || val === 0){ //we do say "0 second(s)", so s needed for zero case
+                    prettyStr = val + " " + addPlural(label); 
+                } else {
+                    prettyStr = val + " " + label;
                 }
                 return prettyStr;
             }
         
             if (finalTime.length === 2){
+            //labels matched and values added, print one final value
                 console.log(prettyString(finalTime));
             } else if (finalTime.length === 4){
+            //labels do not match print result in a sentance
                 console.log(prettyString([finalTime[0], finalTime[1]]) + " and " + prettyString([finalTime[2], finalTime[3]]));
             } else {
                 console.log("error with final time");
@@ -85,22 +90,26 @@ function timeAdder(val1, label1, val2, label2){
             
         }
 
-        if (t1[1] === t2[1]){
-            finalTime.push(t1[0] + t2[0]);
-            finalTime.push(t1[1]);
+        if (l1 === l2){
+        //labels match so time values can be added together and one value printed
+            finalTime.push(v1+ v2);
+            finalTime.push(l1);
             finalTime = tryReduce(finalTime);
         } else {
-            if (t2[1] === "minute"  && t1[1] === "second"){
-                finalTime.push(t2[0], t2[1], t1[0], t1[1]);
-            } else if (t2[1] === "hour" && (t1[1] === "second" || t1[1] === "minute")){
-                finalTime.push(t2[0], t2[1], t1[0], t1[1]);
-            } else if (t2[1] === "day" && (t1[1] === "second"  || t1[1] === "minute"  || t1[1] === "hour" )){
-                finalTime.push(t2[0], t2[1], t1[0], t1[1]);
+        //time labels are different and values cannot be added
+        //make sure the larger label comes first (ex. days before minutes)
+            if (l2 === "minute" && l2 === "second"){
+                finalTime.push(v2, l2, v1, l1);
+            } else if (l2 === "hour" && (l1 === "second" || l1 === "minute")){
+                finalTime.push(v2, l2, v1, l1);
+            } else if (l2 === "day" && (l1 === "second"  || l1 === "minute"  || l1 === "hour" )){
+                finalTime.push(v2, l2, v1, l1);
             }
         }
         printTime(finalTime);
     }
 
+    //first filter out unexpected inputs
     let time1 = sanitizeInputs(val1, label1);
     let time2 = sanitizeInputs(val2, label2);
 
@@ -110,9 +119,11 @@ function timeAdder(val1, label1, val2, label2){
         return;
     }
 
+    //try to reduce large time values to smaller ones with more appropriate labels
     time1 = tryReduce(time1);
     time2 = tryReduce(time2);
-  
+
+    //finally add the time and print to the console.
     addTime(time1, time2);
 }
 
