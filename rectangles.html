@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Expirimenting with the DOM</title>
+</head>
+  
+  <style>
+    #rectangleWrapper{
+      padding-top: 50px;
+      padding-right: 50px;
+      padding-left: 50px;
+      padding-bottom: 0px;
+    }
+    
+    .rectangle {
+      height: 100px;
+      width: 200px;
+    }
+    
+    ul {
+      list-style-type: none;
+    }
+    
+  </style>
+  
+<body onload="getRectIDs()">
+  
+  <h1>Expirimenting with the DOM</h1>
+  <h2>10 rectangles of the same class, but each with a unique ID. Created dynamically with javascript</h2>
+  
+  <div id="rectangleWrapper"></div>
+  
+</body>
+
+<script>
+/*
+1. The top of the page should include a header <h1> tag, with a name for your page, and then an <h2> tag with a description of what's on the page.
+2. Further down the page you should draw 10 rectangles, of any size you wish, and give them each a unique hex-code so they all appear as different colors. 
+3. Below each rectangles, list the hex code (in plain text).
+4. Give all of the rectangles the same class, but make sure each rectangle has a unique ID.
+5. Wrap all of the rectangles in an containing element ( a <div> ) and give that element the id "rectangleWrapper". Now give that element 50 pixels of padding on its top, right and left sides. But add zero padding to the bottom.
+6. When the page loads, console.log the messages "Here are the rectangle IDs" and then console.log all the rectangles' IDs, one at a time.
+7. In the <head> of the document, add a <title> tag that matches the text in the <h1> you added in step 1.
+*/
+
+const Colours = {red: "#E74C3C",
+                 blue: "#3498DB",
+                 green: "#27AE60",
+                 yellow: "#F6F612",
+                 orange: "#F39C12",
+                 terquoise: "#148F77",
+                 maroon: "#922B21",
+                 brown: "#A57000",
+                 black: "#000000",
+                 white: "#FFFFFF"
+                }
+
+function drawRectangles() { 
+  const container = document.getElementById("rectangleWrapper");
+  const newUL = document.createElement("ul");
+  
+  for (let i in Colours){
+    let newLI = document.createElement("li");
+    let LItext = document.createElement("li");
+    newLI.classList.add("rectangle");
+    newLI.style.backgroundColor = Colours[i];
+    newLI.style.margin = "10px";
+    newLI.id = i;
+    LItext.innerText = Colours[i].toString();
+    newUL.appendChild(newLI);
+    newUL.appendChild(LItext);
+  }
+  container.appendChild(newUL);
+}
+drawRectangles(); 
+
+function getRectIDs(){
+  console.log("Here are the rectangle ID's");
+  for (let i in Colours){
+    console.log(i);
+  }
+}
+</script>
