@@ -1,4 +1,4 @@
-/*
+/* Pirple Assignment 9 - destructuring
 The primary difference between destructuring arrays and objects is that you can take 
 advantage of the order of elements in an array to grab a specific index, but when 
 you are destructuring objects, you have to rely on the key/value accosiation to get data.
